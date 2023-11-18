@@ -1,11 +1,9 @@
-import './App.css';
-import VehicleItem from "./Components/VehicleItem"
+import Layout from './Components/Layout';
+import Root from "./Shared/Root";
 
 function App() {
   return (
-    <div className="App">
-      <VehicleItem />
-    </div>
+    <Root />
   );
 }
 
