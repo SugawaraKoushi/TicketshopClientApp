@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import style from "../style";
 
 const Flights = () => {
     const columns = [
@@ -15,9 +16,16 @@ const Flights = () => {
         { id: 1, num: 1, from: "DME", to: "MMK", departureDate: new Date(), arrivingDate: new Date() },
     ];
 
+    const columnVisibilityModel = useMemo(() => {
+        return {
+            id: false,
+        }
+    }, []);
+
     return (
         <>
             <DataGrid
+                style={style.dataGrid}
                 rows={rows}
                 columns={columns}
                 initialState={{
@@ -26,7 +34,8 @@ const Flights = () => {
                     }
                 }}
                 pageSizeOptions={[10]}
-                checkboxSelection />
+                checkboxSelection={false}
+                columnVisibilityModel={columnVisibilityModel} />
         </>
     );
 }

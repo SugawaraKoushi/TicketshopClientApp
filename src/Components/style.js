@@ -6,6 +6,16 @@ const style = {
     },
     grid: {
         placeItems: "center",
+    },
+    dataGrid: {
+        margin: "auto",
+        width: "80%",
+    },
+    editButton: {
+        color: "primary",
+        "&.MuiFocused": {
+            color: "warning",
+        },
     }
 }
 
