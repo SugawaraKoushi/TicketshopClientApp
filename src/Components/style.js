@@ -16,6 +16,11 @@ const style = {
         "&.MuiFocused": {
             color: "warning",
         },
+    },
+    errorPage: {
+        position: "absolute",
+        left: "40%",
+        bottom: "50%",
     }
 }
 
