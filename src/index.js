@@ -6,7 +6,7 @@ import Root from "./Components/Root";
 import ErrorPage from "./Components/ErrorPage";
 import Home from "./Components/Home";
 import Flights from "./Components/Flights/Flights";
-import Vehicles, { loader as vehiclesLoader } from "./Components/Vehicles/Vehicles";
+import Vehicles, { loadRows as vehiclesLoader } from "./Components/Vehicles/Vehicles";
 import Categories from './Components/Categories/Categories';
 import Tickets from './Components/Tickets/Tickets';
 
