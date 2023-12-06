@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from "react";
 import axios from "axios";
-import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
+import EditToolBar from "../EditToolBar";
+import { DataGrid, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
 import { useLoaderData } from "react-router-dom";
-import { Button } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { v4 } from "uuid";
 import style from "../style";
 
 export const loadRows = async () => {
@@ -28,35 +26,6 @@ export const updateRow = async (row) => {
 export const deleteRow = async (id) => {
     await axios.delete(`http://localhost:8080/vehicle/delete/${id}`);
 }
-
-const EditToolBar = (props) => {
-    const { setRows, setRowModesModel } = props;
-
-    const handleAddClick = () => {
-        const id = v4();
-        setRows((oldRows) => [...oldRows, { id, type: "", sits: 0, isNew: true }]);
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: "type" }
-        }));
-    };
-
-    return (
-        <>
-            <GridToolbarContainer>
-                <Button color="primary" startIcon={<AddIcon />} onClick={handleAddClick}>
-                    Добавить запись
-                </Button>
-            </GridToolbarContainer>
-        </>
-    );
-}
-
-const getTogglableColumns = (columns) => {
-    return columns
-        .filter((column) => column.field !== "id")
-        .map((column) => column.field);
-};
 
 const Vehicles = () => {
     const [rows, setRows] = useState(useLoaderData());
