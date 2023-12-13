@@ -9,7 +9,7 @@ const EditToolBar = (props) => {
 
     const handleAddClick = () => {
         const id = v4();
-        setRows((oldRows) => [{ id, type: "", sits: 0, isNew: true }, ...oldRows]);
+        setRows((oldRows) => [{ id, isNew: true }, ...oldRows]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
             [id]: { mode: GridRowModes.Edit, fieldToFocus: "type" }

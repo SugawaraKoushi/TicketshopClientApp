@@ -123,9 +123,24 @@ const Tickets = () => {
         },
         { field: "id", headerName: "ID", width: "300" },
         { field: "name", headerName: "ФИО", width: "300", type: "string", editable: "true" },
-        { field: "departureDate", headerName: "Дата отправления", width: "200", type: "dateTime", editable: "true" },
-        { field: "purchaseDate", headerName: "Дата покупки", width: "200", type: "dateTime", editable: "true" },
-        { field: "bookingDate", headerName: "Дата бронирования", width: "200", type: "dateTime", editable: "true" },
+        {
+            field: "departureDate", headerName: "Дата отправления", width: "200", type: "dateTime", editable: "true",
+            valueGetter: (params) => {
+                return new Date(params.value);
+            }
+        },
+        {
+            field: "purchaseDate", headerName: "Дата покупки", width: "200", type: "dateTime", editable: "true",
+            valueGetter: (params) => {
+                return new Date(params.value);
+            }
+        },
+        {
+            field: "bookingDate", headerName: "Дата бронирования", width: "200", type: "dateTime", editable: "true",
+            valueGetter: (params) => {
+                return new Date(params.value);
+            }
+        },
         { field: "price", headerName: "Стоимость", width: "200", type: "number", editable: "true" },
     ];
 
