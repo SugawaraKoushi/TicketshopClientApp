@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import { DataGrid, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
@@ -10,26 +10,29 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import style from "../style";
 
 export const loadRows = async () => {
-    const response = await axios.get("http://localhost:8080/ticket/get");
-    const data = response.data;
-    return data;
+    const urls = ["http://localhost:8080/ticket/get", "http://localhost:8080/flight/get", "http://localhost:8080/category/get"];
+    const responses = Promise.all(urls.map((url) => axios.get(url)));
+    return responses;
 };
 
-export const saveRow = async (row) => {
+const saveRow = async (row) => {
     await axios.post("http://localhost:8080/ticket/create", row);
 };
 
-export const updateRow = async (row) => {
+const updateRow = async (row) => {
     await axios.put(`http://localhost:8080/ticket/update/${row.id}`, row);
 };
 
-export const deleteRow = async (id) => {
+const deleteRow = async (id) => {
     await axios.delete(`http://localhost:8080/ticket/delete/${id}`);
 }
 
 const Tickets = () => {
-    const [rows, setRows] = useState(useLoaderData());
+    const response = useLoaderData();
+    const [rows, setRows] = useState(response[0].data);
     const [rowModesModel, setRowModesModel] = useState({});
+    const flights = useRef(response[1].data);
+    const categories = useRef(response[2].data);
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -121,8 +124,8 @@ const Tickets = () => {
                 ];
             },
         },
-        { field: "id", headerName: "ID", width: "300" },
-        { field: "name", headerName: "ФИО", width: "300", type: "string", editable: "true" },
+        { field: "id", headerName: "ID", width: "25" },
+        { field: "name", headerName: "ФИО", width: "200", type: "string", editable: "true" },
         {
             field: "departureDate", headerName: "Дата отправления", width: "200", type: "dateTime", editable: "true",
             valueGetter: (params) => {
@@ -142,6 +145,44 @@ const Tickets = () => {
             }
         },
         { field: "price", headerName: "Стоимость", width: "200", type: "number", editable: "true" },
+        {
+            field: "flight", headerName: "Рейс", width: "200", type: "singleSelect", editable: "true",
+            valueGetter: (option) => {
+                const value = option?.value?.id === undefined ? '' : option?.value?.id;
+                return value;
+            },
+            valueOptions: () => {
+                const options = [];
+                for (let i = 0; i < flights.current.length; i++) {
+                    options.push({ value: flights.current[i].id, label: flights.current[i].num });
+                }
+                return options;
+            },
+        },
+        {
+            field: "category", headerName: "Категория", width: "200", type: "singleSelect", editable: "true",
+            valueGetter: (option) => {
+                const value = option?.value?.id === undefined ? '' : option?.value?.id;
+                return value;
+            },
+            valueOptions: (param) => {
+                const options = [];
+                let flight = param.row.flight;
+
+                if (flight === undefined || flight === "") {
+                    return [];
+                }
+
+                flight = flights.current.find((f) => flight === f.id);
+                for (let i = 0; i < categories.current.length; i++) {
+                    if (categories.current[i].vehicle.id === flight.vehicle.id) {
+                        options.push({ value: categories.current[i].id, label: categories.current[i].type });
+                    }
+                }
+                return options;
+            },
+        },
+
     ];
 
     const columnVisibilityModel = useMemo(() => {

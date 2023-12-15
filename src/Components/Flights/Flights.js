@@ -69,7 +69,7 @@ const Flights = () => {
         newRow.vehicle = vehicle;
 
         if (newRow.isNew === undefined || !newRow.isNew) {
-            
+
             updateRow(newRow);
         } else {
             saveRow(newRow);

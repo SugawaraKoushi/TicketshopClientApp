@@ -7,7 +7,7 @@ import ErrorPage from "./Components/ErrorPage";
 import Home from "./Components/Home";
 import Flights, { loadRows as flightsLoader } from "./Components/Flights/Flights";
 import Vehicles, { loadRows as vehiclesLoader } from "./Components/Vehicles/Vehicles";
-import Categories from './Components/Categories/Categories';
+import Categories, { loadRows as categoriesLoader } from './Components/Categories/Categories';
 import Tickets, { loadRows as ticketsLoader } from './Components/Tickets/Tickets';
 
 
@@ -24,16 +24,17 @@ const router = createBrowserRouter([
       {
         path: "/flights",
         element: <Flights />,
-        loader: flightsLoader
+        loader: flightsLoader,
       },
       {
         path: "/vehicles",
         element: <Vehicles />,
-        loader: vehiclesLoader
+        loader: vehiclesLoader,
       },
       {
         path: "/categories",
         element: <Categories />,
+        loader: categoriesLoader,
       },
       {
         path: "/tickets",
