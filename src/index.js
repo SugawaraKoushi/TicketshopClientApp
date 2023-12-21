@@ -9,6 +9,7 @@ import Flights, { loadRows as flightsLoader } from "./Components/Flights/Flights
 import Vehicles, { loadRows as vehiclesLoader } from "./Components/Vehicles/Vehicles";
 import Categories, { loadRows as categoriesLoader } from './Components/Categories/Categories';
 import Tickets, { loadRows as ticketsLoader } from './Components/Tickets/Tickets';
+import Ticket from './Components/Tickets/Ticket';
 
 
 const router = createBrowserRouter([
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
         element: <Tickets />,
         loader: ticketsLoader
       },
+      {
+        path: "/buyTicket",
+        element: <Ticket />
+      }
     ],
   },
   
