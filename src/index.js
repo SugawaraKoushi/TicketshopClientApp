@@ -10,6 +10,8 @@ import Vehicles, { loadRows as vehiclesLoader } from "./Components/Vehicles/Vehi
 import Categories, { loadRows as categoriesLoader } from './Components/Categories/Categories';
 import Tickets, { loadRows as ticketsLoader } from './Components/Tickets/Tickets';
 import Ticket from './Components/Tickets/Ticket';
+import Cities, { loadRows as citiesLoader } from './Components/Cities/Cities';
+import Airports, { loadRows as airportsLoader } from './Components/Airports/Airports';
 
 
 const router = createBrowserRouter([
@@ -45,10 +47,20 @@ const router = createBrowserRouter([
       {
         path: "/buyTicket",
         element: <Ticket />
+      },
+      {
+        path: "/cities",
+        element: <Cities />,
+        loader: citiesLoader,
+      },
+      {
+        path: "/airports",
+        element: <Airports />,
+        loader: airportsLoader,
       }
     ],
   },
-  
+
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

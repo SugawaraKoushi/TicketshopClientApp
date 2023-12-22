@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import { DataGrid, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
@@ -10,26 +10,28 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import style from "../style";
 
 export const loadRows = async () => {
-    const response = await axios.get("http://localhost:8080/vehicle/get");
-    const data = response.data;
-    return data;
+    const urls = ["http://localhost:8080/airport/get", "http://localhost:8080/city/get"];
+    const responses = Promise.all(urls.map((url) => axios.get(url)));
+    return responses;
 };
 
 const saveRow = async (row) => {
-    await axios.post("http://localhost:8080/vehicle/create", row);
+    await axios.post("http://localhost:8080/airport/create", row);
 };
 
 const updateRow = async (row) => {
-    await axios.put(`http://localhost:8080/vehicle/update/${row.id}`, row);
+    await axios.put(`http://localhost:8080/airport/update/${row.id}`, row);
 };
 
 const deleteRow = async (id) => {
-    await axios.delete(`http://localhost:8080/vehicle/delete/${id}`);
+    await axios.delete(`http://localhost:8080/airport/delete/${id}`);
 }
 
-const Vehicles = () => {
-    const [rows, setRows] = useState(useLoaderData());
+const Airports = () => {
+    const response = useLoaderData();
+    const [rows, setRows] = useState(response[0].data);
     const [rowModesModel, setRowModesModel] = useState({});
+    const cities = useRef(response[1].data);
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -63,6 +65,9 @@ const Vehicles = () => {
     };
 
     const processRowUpdate = (newRow) => {
+        const city = cities.current.find((v) => v.id === newRow.city);
+        newRow.city = city;
+
         if (newRow.isNew === undefined || !newRow.isNew) {
             updateRow(newRow);
         } else {
@@ -122,13 +127,21 @@ const Vehicles = () => {
             },
         },
         { field: "id", headerName: "ID", width: "300" },
-        { field: "type", headerName: "Тип", width: "300", editable: "false" },
+        { field: "name", headerName: "Название", width: "300", editable: "true" },
+        { field: "abbreviation", headerName: "Аббревиатура", width: "300", editable: "true" },
         {
-            field: "sits", headerName: "Общее количество мест", width: "300", editable: "false", type: "number",
-            preProcessEditCellProps: (params) => {
-                const hasError = params.props.value < 1;
-                return {...params.props, error: hasError };
-            }
+            field: "city", headerName: "Город", width: "200", type: "singleSelect", editable: "true",
+            valueGetter: (option) => {
+                const value = option?.value?.id === undefined ? '' : option?.value?.id;
+                return value;
+            },
+            valueOptions: () => {
+                const options = [];
+                for (let i = 0; i < cities.current.length; i++) {
+                    options.push({ value: cities.current[i].id, label: cities.current[i].name });
+                }
+                return options;
+            },
         },
     ];
 
@@ -169,4 +182,4 @@ const Vehicles = () => {
     );
 }
 
-export default Vehicles;
+export default Airports;

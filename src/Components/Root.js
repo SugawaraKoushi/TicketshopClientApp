@@ -5,7 +5,7 @@ import AirlinesIcon from '@mui/icons-material/Airlines';
 import style from "./style";
 
 const Root = () => {
-    const routes = ["/home", "/flights", "/vehicles", "/categories", "/tickets"];
+    const routes = ["/home", "/flights", "/vehicles", "/categories", "/tickets", "/cities", "/airports"];
     const location = useLocation();
 
     return (
@@ -13,12 +13,12 @@ const Root = () => {
             <AppBar style={style.appbar}>
                 <Toolbar>
                     <Grid container style={style.grid}>
-                        <Grid item xs={2}>
+                        <Grid item xs={1}>
                             <Typography>
                                 <AirlinesIcon />
                             </Typography>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={7}>
                             <Tabs
                                 textColor="inherit"
                                 value={
@@ -32,6 +32,8 @@ const Root = () => {
                                 <Tab label="Транспорт" value={routes[2]} component={Link} to={routes[2]} />
                                 <Tab label="Категории" value={routes[3]} component={Link} to={routes[3]} />
                                 <Tab label="Билеты" value={routes[4]} component={Link} to={routes[4]} />
+                                <Tab label="Города" value={routes[5]} component={Link} to={routes[5]} />
+                                <Tab label="Аэропорты" value={routes[6]} component={Link} to={routes[6]} />
                             </Tabs>
                         </Grid>
                     </Grid>

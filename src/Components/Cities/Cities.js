@@ -10,24 +10,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import style from "../style";
 
 export const loadRows = async () => {
-    const response = await axios.get("http://localhost:8080/vehicle/get");
+    const response = await axios.get("http://localhost:8080/city/get");
     const data = response.data;
     return data;
 };
 
 const saveRow = async (row) => {
-    await axios.post("http://localhost:8080/vehicle/create", row);
+    await axios.post("http://localhost:8080/city/create", row);
 };
 
 const updateRow = async (row) => {
-    await axios.put(`http://localhost:8080/vehicle/update/${row.id}`, row);
+    await axios.put(`http://localhost:8080/city/update/${row.id}`, row);
 };
 
 const deleteRow = async (id) => {
-    await axios.delete(`http://localhost:8080/vehicle/delete/${id}`);
+    await axios.delete(`http://localhost:8080/city/delete/${id}`);
 }
 
-const Vehicles = () => {
+const Cities = () => {
     const [rows, setRows] = useState(useLoaderData());
     const [rowModesModel, setRowModesModel] = useState({});
 
@@ -122,14 +122,7 @@ const Vehicles = () => {
             },
         },
         { field: "id", headerName: "ID", width: "300" },
-        { field: "type", headerName: "Тип", width: "300", editable: "false" },
-        {
-            field: "sits", headerName: "Общее количество мест", width: "300", editable: "false", type: "number",
-            preProcessEditCellProps: (params) => {
-                const hasError = params.props.value < 1;
-                return {...params.props, error: hasError };
-            }
-        },
+        { field: "name", headerName: "Название", width: "300", editable: "true" },
     ];
 
     const columnVisibilityModel = useMemo(() => {
@@ -169,4 +162,4 @@ const Vehicles = () => {
     );
 }
 
-export default Vehicles;
+export default Cities;

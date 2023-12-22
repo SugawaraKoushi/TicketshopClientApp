@@ -15,16 +15,14 @@ const style = {
         left: "40%",
         bottom: "50%",
     },
-    ticketFormLayout: {
-        margin: "auto",
-        padding: "10px",
+    ticketForm: {
+        display: "grid",
+        gridAutoFlow: "row",
+        gridRowGap: "15px",
+        margin: "2% auto",
         width: "20%",
-        '& MUI.TextField': {
-            padding: "0px",
-        }
-    }, 
-    ticket: {
-        padding: "10px",
+        height: "100%",
+        padding: "10px 0",
     }
 }
 
