@@ -1,3 +1,5 @@
+import { styled } from "@mui/material/styles"
+
 const style = {
     appbar: {
         background: "linear-gradient(0deg, rgba(34,191,195,1) 0%, rgba(46,159,189,1) 100%)",
@@ -9,6 +11,9 @@ const style = {
     dataGrid: {
         margin: "auto",
         width: "80%",
+        '& .MuiError': {
+            color: "rgb(126,10,15)",
+        }
     },
     errorPage: {
         position: "absolute",

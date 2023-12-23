@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useCallback } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import { DataGrid, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
@@ -10,7 +10,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import style from "../style";
 
 export const loadRows = async () => {
-    const urls = ["http://localhost:8080/flight/get", "http://localhost:8080/vehicle/get"];
+    const urls = ["http://localhost:8080/flight/get", "http://localhost:8080/vehicle/get", "http://localhost:8080/airport/get"];
     const responses = Promise.all(urls.map((url) => axios.get(url)));
     return responses;
 };
@@ -32,6 +32,7 @@ const Flights = () => {
     const [rows, setRows] = useState(response[0].data);
     const [rowModesModel, setRowModesModel] = useState({});
     const vehicles = useRef(response[1].data);
+    const airports = useRef(response[2].data);
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -44,6 +45,7 @@ const Flights = () => {
     };
 
     const handleSaveClick = (id) => () => {
+        console.log(rowModesModel);
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
@@ -66,7 +68,11 @@ const Flights = () => {
 
     const processRowUpdate = (newRow) => {
         const vehicle = vehicles.current.find((v) => v.id === newRow.vehicle);
+        const airportFrom = airports.current.find((a) => a.id === newRow.from);
+        const airportTo = airports.current.find((a) => a.id === newRow.to);
         newRow.vehicle = vehicle;
+        newRow.from = airportFrom;
+        newRow.to = airportTo;
 
         if (newRow.isNew === undefined || !newRow.isNew) {
 
@@ -128,9 +134,51 @@ const Flights = () => {
             },
         },
         { field: "id", headerName: "ID", width: "25", editable: "true" },
-        { field: "num", headerName: "Номер", width: "100", type: "number", editable: "true" },
-        { field: "from", headerName: "Место отправления", width: "200", editable: "true" },
-        { field: "to", headerName: "Место прибытия", width: "200", editable: "true" },
+        {
+            field: "num", headerName: "Номер", width: "100", type: "number", editable: "true",
+            preProcessEditCellProps: (params) => {
+                const hasError = params.props.value === undefined;
+                return { ...params.props, error: hasError };
+            },
+        },
+        {
+            field: "from", headerName: "Место отправления", width: "200", type: "singleSelect", editable: "true",
+            valueGetter: (option) => {
+                const value = option?.value?.id === undefined ? "" : option?.value?.id;
+                return value;
+            },
+            valueOptions: () => {
+                const options = [];
+                for (let i = 0; i < airports.current.length; i++) {
+                    options.push({ value: airports.current[i].id, label: `${airports.current[i].name} (${airports.current[i].abbreviation})` })
+                }
+                return options;
+            },
+            preProcessEditCellProps: (params) => {
+                const to = params.otherFieldsProps.to.value;
+                const hasError = params.props.value === to || params.props.value === undefined;
+                return { ...params.props, error: hasError };
+            },
+        },
+        {
+            field: "to", headerName: "Место прибытия", width: "200", type: "singleSelect", editable: "true",
+            valueGetter: (option) => {
+                const value = option?.value?.id === undefined ? "" : option?.value?.id;
+                return value;
+            },
+            valueOptions: () => {
+                const options = [];
+                for (let i = 0; i < airports.current.length; i++) {
+                    options.push({ value: airports.current[i].id, label: `${airports.current[i].name} (${airports.current[i].abbreviation})` })
+                }
+                return options;
+            },
+            preProcessEditCellProps: (params) => {
+                const from = params.otherFieldsProps.from.value;
+                const hasError = params.props.value === from;
+                return { ...params.props, error: hasError };
+            },
+        },
         {
             field: "departureDate", headerName: "Дата отправления", width: "200", type: "dateTime", editable: "true",
             valueGetter: (params) => {
