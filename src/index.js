@@ -9,10 +9,10 @@ import Flights, { loadRows as flightsLoader } from "./Components/Flights/Flights
 import Vehicles, { loadRows as vehiclesLoader } from "./Components/Vehicles/Vehicles";
 import Categories, { loadRows as categoriesLoader } from './Components/Categories/Categories';
 import Tickets, { loadRows as ticketsLoader } from './Components/Tickets/Tickets';
-import Ticket from './Components/Tickets/Ticket';
+import FindFlights, { loadRows as FindFlightsLoader } from './Components/Flights/FindFlights';
 import Cities, { loadRows as citiesLoader } from './Components/Cities/Cities';
 import Airports, { loadRows as airportsLoader } from './Components/Airports/Airports';
-
+import FoundFlights from './Components/Flights/FoundFlights';
 
 const router = createBrowserRouter([
   {
@@ -46,7 +46,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/buyTicket",
-        element: <Ticket />
+        element: <FindFlights />,
+        loader: FindFlightsLoader,
       },
       {
         path: "/cities",
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
         path: "/airports",
         element: <Airports />,
         loader: airportsLoader,
+      },
+      {
+        path: "/foundFlights", 
+        element: <FoundFlights />,
       }
     ],
   },

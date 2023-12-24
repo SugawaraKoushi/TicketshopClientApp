@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import { DataGrid, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
@@ -45,7 +45,6 @@ const Flights = () => {
     };
 
     const handleSaveClick = (id) => () => {
-        console.log(rowModesModel);
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
@@ -55,10 +54,7 @@ const Flights = () => {
     };
 
     const handleCancelClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View, ignoreModifications: true }, });
 
         const editedRow = rows.find((row) => row.id === id);
         if (editedRow.isNew) {
@@ -75,7 +71,6 @@ const Flights = () => {
         newRow.to = airportTo;
 
         if (newRow.isNew === undefined || !newRow.isNew) {
-
             updateRow(newRow);
         } else {
             saveRow(newRow);
@@ -84,6 +79,10 @@ const Flights = () => {
         const updatedRow = { ...newRow, isNew: false };
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
         return updatedRow;
+    };
+
+    const handleProcessRowUpdateError = () => {
+        alert("error");
     };
 
     const handleRowModesModelChange = (newRowModesModel) => {
@@ -133,13 +132,13 @@ const Flights = () => {
                 ];
             },
         },
-        { field: "id", headerName: "ID", width: "25", editable: "true" },
+        { field: "id", headerName: "ID", width: "25", editable: "true", },
         {
             field: "num", headerName: "Номер", width: "100", type: "number", editable: "true",
             preProcessEditCellProps: (params) => {
-                const hasError = params.props.value === undefined;
+                const hasError = params.props.value === undefined || params.props.value === "";
                 return { ...params.props, error: hasError };
-            },
+            }
         },
         {
             field: "from", headerName: "Место отправления", width: "200", type: "singleSelect", editable: "true",
@@ -183,7 +182,7 @@ const Flights = () => {
             field: "departureDate", headerName: "Дата отправления", width: "200", type: "dateTime", editable: "true",
             valueGetter: (params) => {
                 return new Date(params.value);
-            }
+            },
         },
         {
             field: "arrivingDate", headerName: "Дата прибытия", width: "200", type: "dateTime", editable: "true",
@@ -220,11 +219,14 @@ const Flights = () => {
                 rows={rows}
                 columns={columns}
                 editMode="row"
+                showCellVerticalBorder={true}
+                showColumnVerticalBorder={true}
                 rowModesModel={rowModesModel}
                 onRowModesModelChange={handleRowModesModelChange}
                 experimentalFeatures={{ newEditingApi: true }}
                 onRowEditStop={handleRowEditStop}
                 processRowUpdate={processRowUpdate}
+                onProcessRowUpdateError={handleProcessRowUpdateError}
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 10 },

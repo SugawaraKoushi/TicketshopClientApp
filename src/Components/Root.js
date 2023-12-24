@@ -5,7 +5,7 @@ import AirlinesIcon from '@mui/icons-material/Airlines';
 import style from "./style";
 
 const Root = () => {
-    const routes = ["/home", "/flights", "/vehicles", "/categories", "/tickets", "/cities", "/airports"];
+    const routes = ["/home", "/flights", "/vehicles", "/categories", "/tickets", "/cities", "/airports", "/buyTicket"];
     const location = useLocation();
 
     return (
@@ -22,7 +22,7 @@ const Root = () => {
                             <Tabs
                                 textColor="inherit"
                                 value={
-                                    location.pathname !== "/"
+                                    (location.pathname !== "/buyTicket" || location.pathname !== "/")
                                     ? location.pathname
                                     : false
                                 }
@@ -34,6 +34,7 @@ const Root = () => {
                                 <Tab label="Билеты" value={routes[4]} component={Link} to={routes[4]} />
                                 <Tab label="Города" value={routes[5]} component={Link} to={routes[5]} />
                                 <Tab label="Аэропорты" value={routes[6]} component={Link} to={routes[6]} />
+                                <Tab label="Купить" value={routes[7]} component={Link} to={routes[7]} />
                             </Tabs>
                         </Grid>
                     </Grid>

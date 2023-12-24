@@ -11,9 +11,6 @@ const style = {
     dataGrid: {
         margin: "auto",
         width: "80%",
-        '& .MuiError': {
-            color: "rgb(126,10,15)",
-        }
     },
     errorPage: {
         position: "absolute",
