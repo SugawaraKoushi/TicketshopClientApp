@@ -25,32 +25,27 @@ export const loadRows = async () => {
     return responses;
 };
 
-// const saveData = async (row) => {
-//      const response = await axios.post("http://localhost:8080/flight/create", row);
-//      return response;
-// };
+const saveRow = async (row) => {
+    await axios.post("http://localhost:8080/flight/create", row);
+};
 
-const useSaveRow = async () => {
-    return React.useCallback(
+const useSaveRow = () => {
+    return useCallback(
         (row) =>
             new Promise((resolve, reject) => {
-                try {
-                    const response = axios.post(
-                        "http://localhost:8080/flight/create",
-                        row
-                    );
-                    resolve(response.data);
-                } catch (err) {
-                    reject(
-                        new Error(
-                            "Ошибка при сохранении: заполните обязательные поля"
-                        )
-                    );
-                }
+                const values = Object.values(row);
+                for (let i = 0; i < values.length; i++) {
+                    if (values[i] === undefined) {
+                        reject(new Error("Заполните все поля"));
+                        return;
+                    }
+                }   
+
+                resolve(saveRow(row));
             }),
-        []
+        [],
     );
-};
+}
 
 const updateRow = async (row) => {
     await axios.put(`http://localhost:8080/flight/update/${row.id}`, row);
@@ -106,7 +101,7 @@ const Flights = () => {
         }
     };
 
-    const setGuids = (row) => {
+    const setFields = (row) => {
         const vehicle = vehicles.current.find((v) => v.id === row.vehicle);
         const airportFrom = airports.current.find((a) => a.id === row.from);
         const airportTo = airports.current.find((a) => a.id === row.to);
@@ -115,36 +110,23 @@ const Flights = () => {
         row.to = airportTo;
     };
 
-    // const processRowUpdate = (newRow) => {
-    //     const vehicle = vehicles.current.find((v) => v.id === newRow.vehicle);
-    //     const airportFrom = airports.current.find((a) => a.id === newRow.from);
-    //     const airportTo = airports.current.find((a) => a.id === newRow.to);
-    //     newRow.vehicle = vehicle;
-    //     newRow.from = airportFrom;
-    //     newRow.to = airportTo;
-
-    //     if (newRow.isNew === undefined || !newRow.isNew) {
-    //         updateRow(newRow);
-    //     } else {
-    //         saveRow(newRow);
-    //     }
-
-    //     const updatedRow = { ...newRow, isNew: false };
-    //     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    //     return updatedRow;
-    // };
-
-    const processRowUpdate = React.useCallback(
+    const processRowUpdate = useCallback(
         async (newRow) => {
-            setGuids(newRow);
-            const response = await saveRow(newRow);
-            // const updatedRow = { ...newRow, isNew: false };
-            // setRows(
-            //     rows.map((row) => (row.id === newRow.id ? updatedRow : row))
-            // );
-            // return updatedRow;
+            setFields(newRow);
+
+            if (newRow.isNew === undefined || !newRow.isNew) {
+                updateRow(newRow);
+            } else {
+                await saveRow(newRow);
+            }
+
+            const updatedRow = { ...newRow, isNew: false };
+            setRows(
+                rows.map((row) => (row.id === newRow.id ? updatedRow : row))
+            );
+            return updatedRow;
         },
-        [saveRow]
+        [saveRow, rows]
     );
 
     const handleProcessRowUpdateError = React.useCallback((error) => {
@@ -157,6 +139,7 @@ const Flights = () => {
     };
 
     const handleCloseSnackbar = () => setSnackbar(null);
+
     const columns = [
         {
             field: "actions",
