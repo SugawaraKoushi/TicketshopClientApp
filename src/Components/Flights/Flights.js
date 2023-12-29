@@ -13,6 +13,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import style from "../style";
+import { Alert, Snackbar } from "@mui/material";
 
 export const loadRows = async () => {
     const urls = [
@@ -24,11 +25,12 @@ export const loadRows = async () => {
     return responses;
 };
 
-// const saveRow = async (row) => {
-//     await axios.post("http://localhost:8080/flight/create", row);
+// const saveData = async (row) => {
+//      const response = await axios.post("http://localhost:8080/flight/create", row);
+//      return response;
 // };
 
-const useSaveRow = () => {
+const useSaveRow = async () => {
     return React.useCallback(
         (row) =>
             new Promise((resolve, reject) => {
@@ -60,11 +62,12 @@ const deleteRow = async (id) => {
 
 const Flights = () => {
     const response = useLoaderData();
+    const saveRow = useSaveRow();
     const [rows, setRows] = useState(response[0].data);
     const [rowModesModel, setRowModesModel] = useState({});
+    const [snackbar, setSnackbar] = useState(null);
     const vehicles = useRef(response[1].data);
     const airports = useRef(response[2].data);
-    const saveRow = useSaveRow();
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -103,6 +106,15 @@ const Flights = () => {
         }
     };
 
+    const setGuids = (row) => {
+        const vehicle = vehicles.current.find((v) => v.id === row.vehicle);
+        const airportFrom = airports.current.find((a) => a.id === row.from);
+        const airportTo = airports.current.find((a) => a.id === row.to);
+        row.vehicle = vehicle;
+        row.from = airportFrom;
+        row.to = airportTo;
+    };
+
     // const processRowUpdate = (newRow) => {
     //     const vehicle = vehicles.current.find((v) => v.id === newRow.vehicle);
     //     const airportFrom = airports.current.find((a) => a.id === newRow.from);
@@ -122,31 +134,29 @@ const Flights = () => {
     //     return updatedRow;
     // };
 
-    const processRowUpdate = useCallback(
+    const processRowUpdate = React.useCallback(
         async (newRow) => {
+            setGuids(newRow);
             const response = await saveRow(newRow);
-            const vehicle = vehicles.current.find(
-                (v) => v.id === newRow.vehicle
-            );
-            const airportFrom = airports.current.find(
-                (a) => a.id === newRow.from
-            );
-            const airportTo = airports.current.find((a) => a.id === newRow.to);
-            newRow.vehicle = vehicle;
-            newRow.from = airportFrom;
-            newRow.to = airportTo;
+            // const updatedRow = { ...newRow, isNew: false };
+            // setRows(
+            //     rows.map((row) => (row.id === newRow.id ? updatedRow : row))
+            // );
+            // return updatedRow;
         },
         [saveRow]
     );
 
-    const handleProcessRowUpdateError = () => {
-        alert("error");
-    };
+    const handleProcessRowUpdateError = React.useCallback((error) => {
+        console.log(error);
+        setSnackbar({ children: error.message, severity: "error" });
+    }, []);
 
     const handleRowModesModelChange = (newRowModesModel) => {
         setRowModesModel(newRowModesModel);
     };
 
+    const handleCloseSnackbar = () => setSnackbar(null);
     const columns = [
         {
             field: "actions",
@@ -200,12 +210,12 @@ const Flights = () => {
             width: "100",
             type: "number",
             editable: "true",
-            preProcessEditCellProps: (params) => {
-                const hasError =
-                    params.props.value === undefined ||
-                    params.props.value === "";
-                return { ...params.props, error: hasError };
-            },
+            // preProcessEditCellProps: (params) => {
+            //     const hasError =
+            //         params.props.value === undefined ||
+            //         params.props.value === "";
+            //     return { ...params.props, error: hasError };
+            // },
         },
         {
             field: "from",
@@ -231,8 +241,8 @@ const Flights = () => {
             preProcessEditCellProps: (params) => {
                 const to = params.otherFieldsProps.to.value;
                 const hasError =
-                    params.props.value === to ||
-                    params.props.value === undefined;
+                    params.props.value === undefined ||
+                    params.props.value === to;
                 return { ...params.props, error: hasError };
             },
         },
@@ -259,7 +269,9 @@ const Flights = () => {
             },
             preProcessEditCellProps: (params) => {
                 const from = params.otherFieldsProps.from.value;
-                const hasError = params.props.value === from;
+                const hasError =
+                    params.props.value === undefined ||
+                    params.props.value === from;
                 return { ...params.props, error: hasError };
             },
         },
@@ -342,6 +354,16 @@ const Flights = () => {
                     //columnsPanel: { getTogglableColumns },
                 }}
             />
+            {!!snackbar && (
+                <Snackbar
+                    open
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    onClose={handleCloseSnackbar}
+                    autoHideDuration={6000}
+                >
+                    <Alert {...snackbar} onClose={handleCloseSnackbar} />
+                </Snackbar>
+            )}
         </>
     );
 };
