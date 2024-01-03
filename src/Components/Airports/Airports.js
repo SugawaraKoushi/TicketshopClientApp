@@ -128,7 +128,7 @@ const Airports = () => {
         },
         { field: "id", headerName: "ID", width: "300" },
         { field: "name", headerName: "Название", width: "300", editable: "true" },
-        { field: "abbreviation", headerName: "Аббревиатура", width: "300", editable: "true" },
+        { field: "abbreviation", headerName: "Код", width: "300", editable: "true" },
         {
             field: "city", headerName: "Город", width: "200", type: "singleSelect", editable: "true",
             valueGetter: (option) => {
