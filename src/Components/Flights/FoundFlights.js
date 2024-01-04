@@ -34,7 +34,7 @@ const FoundFlights = () => {
             setFlights(data);
             generatePrice(data.length);
             generateLuggagePrice(data.length);
-            generateLuggageSwitchValues(data.length);
+            //generateLuggageSwitchValues(data.length);
         } catch (err) {
             alert(err.message);
         }
@@ -86,7 +86,16 @@ const FoundFlights = () => {
     };
 
     const handleLuggageSwitchChange = (event) => {
+        const ticketPrices = prices;
+        const luggageTicketPrices = luggagePrices;
+        const pos = event.target.name;
+        if (event.target.checked) {
+            ticketPrices[pos] = Number(ticketPrices[pos]) + Number(luggageTicketPrices[pos]);
+        } else {
+            ticketPrices[pos] = Number(ticketPrices[pos]) - Number(luggageTicketPrices[pos]);
+        }
         setLuggageSwitches({ [event.target.name]: event.target.checked });
+        setPrices(ticketPrices);
     };
 
     return (
@@ -135,6 +144,7 @@ const FoundFlights = () => {
                                 control={
                                     <Switch
                                         checked={luggageSwitches[i]}
+                                        defaultChecked={false}
                                         onChange={handleLuggageSwitchChange}
                                         inputProps={{
                                             "aria-label": "controlled",

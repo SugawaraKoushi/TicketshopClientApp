@@ -157,6 +157,8 @@ const Airports = () => {
                 style={style.dataGrid}
                 rows={rows}
                 columns={columns}
+                showCellVerticalBorder={true}
+                showColumnVerticalBorder={true}
                 editMode="row"
                 rowModesModel={rowModesModel}
                 onRowModesModelChange={handleRowModesModelChange}
