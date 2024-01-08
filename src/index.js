@@ -13,6 +13,7 @@ import FindFlights, { loadRows as FindFlightsLoader } from './Components/Flights
 import Cities, { loadRows as citiesLoader } from './Components/Cities/Cities';
 import Airports, { loadRows as airportsLoader } from './Components/Airports/Airports';
 import FoundFlights from './Components/Flights/FoundFlights';
+import Registration from './Components/Registration';
 
 const router = createBrowserRouter([
   {
@@ -60,12 +61,15 @@ const router = createBrowserRouter([
         loader: airportsLoader,
       },
       {
-        path: "/foundFlights", 
+        path: "/foundFlights",
         element: <FoundFlights />,
+      },
+      {
+        path: "/registration",
+        element: <Registration />
       }
     ],
   },
-
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

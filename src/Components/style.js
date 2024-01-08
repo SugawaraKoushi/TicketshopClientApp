@@ -25,7 +25,16 @@ const style = {
         width: "20%",
         height: "100%",
         padding: "10px 0",
-    }
+    },
+    registrationForm: {
+        display: "grid",
+        gridAutoFlow: "row",
+        gridRowGap: "15px",
+        margin: "2% auto",
+        width: "20%",
+        height: "100%",
+        padding: "10px 0",
+    },
 }
 
 export default style;
