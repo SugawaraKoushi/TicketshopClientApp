@@ -34,11 +34,22 @@ const FoundFlights = () => {
             setFlights(data);
             generatePrice(data.length);
             generateLuggagePrice(data.length);
-            //generateLuggageSwitchValues(data.length);
         } catch (err) {
             alert(err.message);
         }
     };
+
+    const getHoursDeclination = (diffInHours) => {
+        if (diffInHours % 10 > 4 || diffInHours % 10 === 0) {
+            return "часов";
+        }
+
+        if (diffInHours % 10 === 1) {
+            return "час";
+        }
+
+        return "часа";
+    }
 
     const calculateTimeDifference = (departure, arriving) => {
         const date1 = new Date(departure);
@@ -46,9 +57,7 @@ const FoundFlights = () => {
         const diffInMs = Math.abs(date2 - date1);
         const diffInHours = diffInMs / (1000 * 60 * 60);
         const diffInMinutes = (diffInMs % (1000 * 60 * 60)) / (1000 * 60);
-        return `${diffInHours.toFixed(0)} часа ${diffInMinutes.toFixed(
-            0
-        )} минут`;
+        return `${diffInHours.toFixed(0)} ${getHoursDeclination(diffInHours)} ${diffInMinutes.toFixed(0)} минуты`;
     };
 
     const generatePrice = (size) => {
@@ -77,14 +86,6 @@ const FoundFlights = () => {
         return `Багаж +${luggagePrices[i]}`;
     };
 
-    const generateLuggageSwitchValues = (size) => {
-        let values = [];
-        for (let i = 0; i < size; i++) {
-            values.push({ i: false });
-        }
-        setLuggageSwitches(values);
-    };
-
     const handleLuggageSwitchChange = (event) => {
         const ticketPrices = prices;
         const luggageTicketPrices = luggagePrices;
@@ -97,6 +98,13 @@ const FoundFlights = () => {
         setLuggageSwitches({ [event.target.name]: event.target.checked });
         setPrices(ticketPrices);
     };
+
+    const getDate = (date) => {
+        const d = new Date(date);
+        const days = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
+        const months = ["янв", "февр", "апр", "авг", "сент", "окт", "нояб", "дек"];
+        return `${d.getDate()} ${months[d.getMonth()]}, ${days[d.getDay()]}`;
+    }
 
     return (
         <>
@@ -186,7 +194,7 @@ const FoundFlights = () => {
                                     sx={{ fontSize: "8pt", textAlign: "left" }}
                                 >
                                     {flight.from.city.name}
-                                    <br />1 янв, пн
+                                    <br />{getDate(flight.arrivingDate)}
                                 </InputLabel>
                             </Grid>
                             <Grid
@@ -231,7 +239,7 @@ const FoundFlights = () => {
                                     sx={{ fontSize: "8pt", textAlign: "right" }}
                                 >
                                     {flight.to.city.name}
-                                    <br />1 янв, пн
+                                    <br />{getDate(flight.arrivingDate)}
                                 </InputLabel>
                             </Grid>
                         </Grid>

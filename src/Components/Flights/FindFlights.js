@@ -7,6 +7,8 @@ import style from "../style";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useLoaderData } from "react-router-dom";
+import { ruRU } from "@mui/x-date-pickers";
+import ru from "dayjs/locale/ru";
 
 export const loadRows = async () => {
     const response = await axios.get("http://localhost:8080/airport/get");
@@ -44,10 +46,17 @@ const FindFlights = () => {
     return (
         <>
             <div style={style.ticketForm}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <LocalizationProvider adapterLocale={ru} dateAdapter={AdapterDayjs} localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}>
                     <FormControl>
                         <InputLabel id="select-airport-from-label">Откуда</InputLabel>
-                        <Select name="from" id='outlined-required' labelId="select-airport-from-label" label="Откуда" value={from} onChange={handleChangeAirportFrom}>
+                        <Select name="from"
+                            id='outlined-required'
+                            required="true"
+                            labelId="select-airport-from-label"
+                            label="Откуда"
+                            value={from}
+                            onChange={handleChangeAirportFrom}
+                        >
                             <MenuItem value="">Не выбрано</MenuItem>
                             {airports.current.map((airport) => (
                                 <MenuItem key={airport.id} value={airport.id}>{airport.name} ({airport.abbreviation})</MenuItem>
@@ -56,14 +65,26 @@ const FindFlights = () => {
                     </FormControl>
                     <FormControl>
                         <InputLabel id="select-airport-from-label">Куда</InputLabel>
-                        <Select name="to" id='outlined-required' labelId="select-airport-from-label" label="Куда" value={to} onChange={handleChangeAirportTo}>
+                        <Select name="to"
+                            id='outlined-required'
+                            required="true" labelId="select-airport-from-label"
+                            label="Куда"
+                            value={to}
+                            onChange={handleChangeAirportTo}
+                        >
                             <MenuItem value="">Не выбрано</MenuItem>
                             {airports.current.map((airport) => (
                                 <MenuItem key={airport.id} value={airport.id}>{airport.name} ({airport.abbreviation})</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
-                    <DatePicker name="when" id="outlined-required" required label="Когда" onChange={handleChangeDateWhen} />
+                    <DatePicker
+                        name="when" id="outlined-required"
+                        required="true"
+                        label="Когда"
+                        onChange={handleChangeDateWhen}
+                        format="DD.MM.YYYY"
+                    />
                     <Button type="submit" onClick={handleSubmit}>Найти билеты</Button>
                 </LocalizationProvider>
             </div >
