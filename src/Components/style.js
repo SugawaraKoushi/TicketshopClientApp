@@ -27,6 +27,8 @@ const style = {
         padding: "10px 0",
     },
     registrationForm: {
+        textAlign: "center",
+        fontSize: "18pt",
         display: "grid",
         gridAutoFlow: "row",
         gridRowGap: "15px",

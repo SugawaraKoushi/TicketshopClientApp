@@ -14,6 +14,7 @@ import Cities, { loadRows as citiesLoader } from './Components/Cities/Cities';
 import Airports, { loadRows as airportsLoader } from './Components/Airports/Airports';
 import FoundFlights from './Components/Flights/FoundFlights';
 import Registration from './Components/Registration';
+import Login from './Components/Login';
 
 const router = createBrowserRouter([
   {
@@ -67,7 +68,11 @@ const router = createBrowserRouter([
       {
         path: "/registration",
         element: <Registration />
-      }
+      },
+      {
+        path: "/login",
+        element: <Login />
+      },
     ],
   },
 ]);
