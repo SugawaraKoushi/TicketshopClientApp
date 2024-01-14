@@ -41,7 +41,7 @@ const Registration = () => {
             username: username,
             password: password,
         };
-        axios.post("http://localhost:8080/registration/", params);
+        axios.post("http://localhost:8080/user/create", params);
     };
 
     return(
