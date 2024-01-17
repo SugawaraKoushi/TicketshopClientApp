@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import { DataGrid, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -33,6 +33,22 @@ const Tickets = () => {
     const [rowModesModel, setRowModesModel] = useState({});
     const flights = useRef(response[1].data);
     const categories = useRef(response[2].data);
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        getCurrentUser();
+    }, []);
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/user/get-current");
+            if (response.data === '') {
+                navigate("/login");
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {

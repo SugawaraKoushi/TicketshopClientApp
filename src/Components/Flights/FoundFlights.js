@@ -20,10 +20,6 @@ const FoundFlights = () => {
     const [luggagePrices, setLuggagePrices] = useState([]);
     const [luggageSwitches, setLuggageSwitches] = useState([]);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
     const fetchData = async () => {
         try {
             const response = await axios.get(

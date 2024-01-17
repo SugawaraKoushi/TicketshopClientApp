@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useRef } from "react";
+import React, { useCallback, useState, useMemo, useRef, useEffect } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import {
@@ -7,7 +7,7 @@ import {
     GridRowModes,
     GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -28,23 +28,6 @@ const saveRow = async (row) => {
     return await axios.post("http://localhost:8080/category/create", row);
 };
 
-// const useSaveRow = () => {
-//     return useCallback((row) => {
-//         try {
-//             saveRow(row);
-//         } catch (err) {
-//             console.log(err);
-//         }
-//         // new Promise((resolve, reject) => {
-//         //     try {
-//         //         saveRow(row);
-//         //     } catch (err) {
-//         //         console.log(err);
-//         //     }
-//         // });
-//     }, []);
-// };
-
 const updateRow = async (row) => {
     await axios.put(`http://localhost:8080/category/update/${row.id}`, row);
 };
@@ -59,7 +42,22 @@ const Categories = () => {
     const [rowModesModel, setRowModesModel] = useState({});
     const [snackbar, setSnackbar] = useState(null);
     const vehicles = useRef(response[1].data);
-    // const saveRow = useSaveRow();
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        getCurrentUser();
+    }, []);
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/user/get-current");
+            if (response.data === '') {
+                navigate("/login");
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {

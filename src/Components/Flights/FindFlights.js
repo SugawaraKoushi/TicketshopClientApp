@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
@@ -9,7 +9,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useLoaderData } from "react-router-dom";
 import { ruRU } from "@mui/x-date-pickers";
 import ru from "dayjs/locale/ru";
-
 export const loadRows = async () => {
     const response = await axios.get("http://localhost:8080/airport/get");
     return response.data;
@@ -21,6 +20,21 @@ const FindFlights = () => {
     const [to, setTo] = useState("");
     const [when, setWhen] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getCurrentUser();
+    }, []);
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/user/get-current");
+            if (response.data === '') {
+                navigate("/login");
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
 
     const handleChangeAirportFrom = (event) => {
         setFrom(event.target.value);

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import axios from "axios";
 import EditToolBar from "../EditToolBar";
 import {
@@ -7,7 +7,7 @@ import {
     GridRowModes,
     GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -63,6 +63,22 @@ const Flights = () => {
     const [snackbar, setSnackbar] = useState(null);
     const vehicles = useRef(response[1].data);
     const airports = useRef(response[2].data);
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        getCurrentUser();
+    }, []);
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/user/get-current");
+            if (response.data === '') {
+                navigate("/login");
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
 
     const handleRowEditStop = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -193,12 +209,6 @@ const Flights = () => {
             width: "100",
             type: "number",
             editable: "true",
-            // preProcessEditCellProps: (params) => {
-            //     const hasError =
-            //         params.props.value === undefined ||
-            //         params.props.value === "";
-            //     return { ...params.props, error: hasError };
-            // },
         },
         {
             field: "from",
