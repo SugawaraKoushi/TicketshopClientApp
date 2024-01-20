@@ -53,6 +53,28 @@ const Root = () => {
         }
     }
 
+    const getAvailabeTabsForRole = (role) => {
+        let tabs = [];
+
+        if (role === "ROLE_ADMIN") {
+            tabs.push(<Tab label="Главная" value={routes[0]} component={Link} to={routes[0]} />);
+            tabs.push(<Tab label="Рейсы" value={routes[1]} component={Link} to={routes[1]} />);
+            tabs.push(<Tab label="Транспорт" value={routes[2]} component={Link} to={routes[2]} />);
+            tabs.push(<Tab label="Категории" value={routes[3]} component={Link} to={routes[3]} />)
+            tabs.push(<Tab label="Билеты" value={routes[4]} component={Link} to={routes[4]} />)
+            tabs.push(<Tab label="Города" value={routes[5]} component={Link} to={routes[5]} />);
+            tabs.push(<Tab label="Аэропорты" value={routes[6]} component={Link} to={routes[6]} />);
+        } else if (role === "ROLE_USER") {
+            tabs.push(<Tab label="Купить" value={routes[7]} component={Link} to={routes[7]} />);
+        }
+
+        return tabs;
+    };
+
+    const getAvailableTabsCountForRole = (role) => {
+        return role === "ROLE_ADMIN" ? 6 : 1;
+    };
+
     return (
         <>
             <AppBar style={style.appbar}>
@@ -63,28 +85,18 @@ const Root = () => {
                                 <AirlinesIcon />
                             </Typography>
                         </Grid>
-                        {role === "ROLE_ADMIN" && (
-                            <Grid item xs={7}>
-                                <Tabs
-                                    textColor="inherit"
-                                    value={
-                                        ((location.pathname !== "/buyTicket" || location.pathname !== "/" || location.pathname !== "/login" || location.pathname !== "/registration"))
-                                            ? location.pathname
-                                            : false
-                                    }
-                                >
-                                    <Tab label="Главная" value={routes[0]} component={Link} to={routes[0]} />
-                                    <Tab label="Рейсы" value={routes[1]} component={Link} to={routes[1]} />
-                                    <Tab label="Транспорт" value={routes[2]} component={Link} to={routes[2]} />
-                                    <Tab label="Категории" value={routes[3]} component={Link} to={routes[3]} />
-                                    <Tab label="Билеты" value={routes[4]} component={Link} to={routes[4]} />
-                                    <Tab label="Города" value={routes[5]} component={Link} to={routes[5]} />
-                                    <Tab label="Аэропорты" value={routes[6]} component={Link} to={routes[6]} />
-                                    <Tab label="Купить" value={routes[7]} component={Link} to={routes[7]} />
-                                </Tabs>
-                            </Grid>
-                        )}
-
+                        <Grid item xs={getAvailableTabsCountForRole(role)}>
+                            <Tabs
+                                textColor="inherit"
+                                value={
+                                    ((location.pathname !== "/buyTicket" || location.pathname !== "/" || location.pathname !== "/login" || location.pathname !== "/registration"))
+                                        ? location.pathname
+                                        : false
+                                }
+                            >
+                                {getAvailabeTabsForRole(role)}
+                            </Tabs>
+                        </Grid>
                     </Grid>
                     <Button id="logout-button" style={{ color: "white" }} onClick={onLogoutButtonClick}>Выход</Button>
                 </Toolbar>

@@ -3,6 +3,7 @@ import style from "./style";
 import { Button, TextField } from "@mui/material";
 import { v4 } from "uuid";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Registration = () => {
     const [username, setUsername] = useState("");
@@ -11,6 +12,7 @@ const Registration = () => {
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const [passwordValid, setPasswordValid] = useState(true);
+    const navigate = useNavigate();
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -33,7 +35,7 @@ const Registration = () => {
         setPasswordValid(event.target.value === password);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const params = {
             id: v4(),
             firstname: firstname,
@@ -41,7 +43,13 @@ const Registration = () => {
             username: username,
             password: password,
         };
-        axios.post("http://localhost:8080/user/create", params);
+
+        try {
+            axios.post("http://localhost:8080/user/create", params)
+                .then(() => { navigate("/login") });
+        } catch (e) {
+            console.log(e.message);
+        }
     };
 
     return (

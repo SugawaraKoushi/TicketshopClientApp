@@ -48,7 +48,7 @@ const FindFlights = () => {
         setWhen(event);
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         const params = {
             from: from,
             to: to,

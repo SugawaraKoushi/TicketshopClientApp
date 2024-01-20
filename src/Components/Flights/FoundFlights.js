@@ -7,8 +7,8 @@ import {
     InputLabel,
     Switch,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FlightLandIcon from "@mui/icons-material/FlightLand";
@@ -19,6 +19,12 @@ const FoundFlights = () => {
     const [prices, setPrices] = useState([]);
     const [luggagePrices, setLuggagePrices] = useState([]);
     const [luggageSwitches, setLuggageSwitches] = useState([]);
+    const user = useRef();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const fetchData = async () => {
         try {
@@ -34,6 +40,22 @@ const FoundFlights = () => {
             alert(err.message);
         }
     };
+
+    useEffect(() => {
+        getCurrentUser();
+    });
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/user/get-current");
+            if (response.data === '') {
+                navigate("/login");
+            }
+            user.current = response.data;
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
 
     const getHoursDeclination = (diffInHours) => {
         if (diffInHours % 10 > 4 || diffInHours % 10 === 0) {
@@ -85,7 +107,7 @@ const FoundFlights = () => {
     const handleLuggageSwitchChange = (event) => {
         const ticketPrices = prices;
         const luggageTicketPrices = luggagePrices;
-        const pos = event.target.name;
+        const pos = Number(event.target.name);
         if (event.target.checked) {
             ticketPrices[pos] = Number(ticketPrices[pos]) + Number(luggageTicketPrices[pos]);
         } else {
@@ -101,6 +123,27 @@ const FoundFlights = () => {
         const months = ["янв", "февр", "апр", "авг", "сент", "окт", "нояб", "дек"];
         return `${d.getDate()} ${months[d.getMonth()]}, ${days[d.getDay()]}`;
     }
+
+    const handleBuyButtonClick = async (event) => {
+        const pos = Number(event.target.name);
+        const departureDate = flights[pos].departureDate;
+        const purchaseDate = new Date();
+        const bookingDate = purchaseDate;
+        const price = prices[pos];
+        const params = {
+            name: user.current.lastname + " " + user.current.firstname,
+            departureDate: departureDate,
+            purchaseDate: purchaseDate,
+            bookingDate: bookingDate,
+            price: Number(price),
+            flight: flights[pos]
+        }
+        try {
+            await axios.post("http://localhost:8080/ticket/create", params );
+        } catch (e) {
+            console.log(e.message);
+        }
+    };
 
     return (
         <>
@@ -153,7 +196,7 @@ const FoundFlights = () => {
                                         inputProps={{
                                             "aria-label": "controlled",
                                         }}
-                                        name={i}
+                                        name={i.toString()}
                                     />
                                 }
                                 label={getLuggageLabel(i)}
@@ -162,8 +205,10 @@ const FoundFlights = () => {
                             <Button
                                 variant="outlined"
                                 sx={{ width: "80%", margin: "auto" }}
+                                name={i.toString()}
+                                onClick={handleBuyButtonClick}
                             >
-                                Выбрать
+                                Купить билет
                             </Button>
                         </Box>
                         <Grid
