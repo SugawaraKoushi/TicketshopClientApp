@@ -2,9 +2,12 @@ import {
     Box,
     Button,
     Container,
+    FormControl,
     FormControlLabel,
     Grid,
     InputLabel,
+    MenuItem,
+    Select,
     Switch,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
@@ -19,6 +22,7 @@ const FoundFlights = () => {
     const [prices, setPrices] = useState([]);
     const [luggagePrices, setLuggagePrices] = useState([]);
     const [luggageSwitches, setLuggageSwitches] = useState([]);
+    const flightsCategories = useRef();
     const user = useRef();
     const navigate = useNavigate();
 
@@ -36,6 +40,7 @@ const FoundFlights = () => {
             setFlights(data);
             generatePrice(data.length);
             generateLuggagePrice(data.length);
+            flightsCategories.current = await getFlightsCategories(data);
         } catch (err) {
             alert(err.message);
         }
@@ -104,6 +109,21 @@ const FoundFlights = () => {
         return `Багаж +${luggagePrices[i]}`;
     };
 
+    const getFlightsCategories = async (flights) => {
+        try {
+            const params = {
+                flights: flights.map(f => f.id).join(","),
+            };
+            const response = await axios.get(`http://localhost:8080/flight/get-categories`, { params });
+            for (let item in response.data){
+                console.log(item);
+            }
+            return response.data;
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
     const handleLuggageSwitchChange = (event) => {
         const ticketPrices = prices;
         const luggageTicketPrices = luggagePrices;
@@ -139,11 +159,15 @@ const FoundFlights = () => {
             flight: flights[pos]
         }
         try {
-            await axios.post("http://localhost:8080/ticket/create", params );
+            await axios.post("http://localhost:8080/ticket/create", params);
         } catch (e) {
             console.log(e.message);
         }
     };
+
+    const handleCategoryChange = () => {
+
+    }
 
     return (
         <>
@@ -202,6 +226,26 @@ const FoundFlights = () => {
                                 label={getLuggageLabel(i)}
                                 labelPlacement="start"
                             />
+                            <FormControl>
+                                <InputLabel id="select-category">Категория</InputLabel>
+                                <Select name="from"
+                                    id='outlined-required'
+                                    required="true"
+                                    labelId="select-category"
+                                    label="Категория"
+                                    // value={from}
+                                    onChange={handleCategoryChange}
+                                >
+                                    <MenuItem value="">Не выбрано</MenuItem>
+                                    {
+                                        //flightsCategories.current.map((k, v) => {console.log(v)})
+                                        // flightsCategories.current.get(flight).map(category => (
+                                        //     <MenuItem key={category.id} value={category.id}>{category.type}</MenuItem>
+                                        // ))
+                                    }
+
+                                </Select>
+                            </FormControl>
                             <Button
                                 variant="outlined"
                                 sx={{ width: "80%", margin: "auto" }}
