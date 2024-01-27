@@ -114,17 +114,20 @@ const FoundFlights = () => {
             const params = {
                 flights: flights.map(f => f.id).join(","),
             };
+
             const response = await axios.get(`http://localhost:8080/flight/get-categories`, { params });
-            for (let item in response.data){
-                console.log(item);
-            }
             return response.data;
         } catch (e) {
             alert(e.message);
         }
     }
 
-    const handleLuggageSwitchChange = (event) => {
+    const getFlightCategories = (flight) => {
+        const flightWithCategories = flightsCategories?.current?.find((f) => f.flightId === flight.id);
+        return flightWithCategories?.categories;
+    }
+
+    const handleLuggageSwitchChange = (event) => {  
         const ticketPrices = prices;
         const luggageTicketPrices = luggagePrices;
         const pos = Number(event.target.name);
@@ -228,16 +231,18 @@ const FoundFlights = () => {
                             />
                             <FormControl>
                                 <InputLabel id="select-category">Категория</InputLabel>
-                                <Select name="from"
+                                <Select name="category"
                                     id='outlined-required'
                                     required="true"
                                     labelId="select-category"
                                     label="Категория"
-                                    // value={from}
+                                    value={from}
                                     onChange={handleCategoryChange}
                                 >
-                                    <MenuItem value="">Не выбрано</MenuItem>
                                     {
+                                        getFlightCategories(flight)?.map(category => (
+                                            <MenuItem key={category.id} value={category.id}>{category.type}</MenuItem>
+                                        ))
                                         //flightsCategories.current.map((k, v) => {console.log(v)})
                                         // flightsCategories.current.get(flight).map(category => (
                                         //     <MenuItem key={category.id} value={category.id}>{category.type}</MenuItem>

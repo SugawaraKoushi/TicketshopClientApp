@@ -1,5 +1,3 @@
-import { styled } from "@mui/material/styles"
-
 const style = {
     appbar: {
         background: "linear-gradient(0deg, rgba(34,191,195,1) 0%, rgba(46,159,189,1) 100%)",
