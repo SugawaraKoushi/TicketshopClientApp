@@ -22,6 +22,7 @@ const FoundFlights = () => {
     const [prices, setPrices] = useState([]);
     const [luggagePrices, setLuggagePrices] = useState([]);
     const [luggageSwitches, setLuggageSwitches] = useState([]);
+    const [categories, setCategories] = useState([]);
     const flightsCategories = useRef();
     const user = useRef();
     const navigate = useNavigate();
@@ -41,6 +42,11 @@ const FoundFlights = () => {
             generatePrice(data.length);
             generateLuggagePrice(data.length);
             flightsCategories.current = await getFlightsCategories(data);
+
+            for (let i = 0; i < data.length; i++) {
+                categories.push("");
+            }
+            setCategories(categories);
         } catch (err) {
             alert(err.message);
         }
@@ -168,8 +174,11 @@ const FoundFlights = () => {
         }
     };
 
-    const handleCategoryChange = () => {
-
+    const handleCategoryChange = (event) => {
+        const pos = Number(event.target.name);
+        let categoryList = categories;
+        categoryList[pos] = event.target.value ;
+        setCategories(categoryList);
     }
 
     return (
@@ -196,7 +205,7 @@ const FoundFlights = () => {
                                 flexDirection: "column",
                                 alignContent: "space-between",
                                 width: "25%",
-                                height: "150px",
+                                height: "200px",
                                 borderRight: "1px solid",
                                 borderColor: "rgb(217, 217, 217)",
                             }}
@@ -231,22 +240,19 @@ const FoundFlights = () => {
                             />
                             <FormControl>
                                 <InputLabel id="select-category">Категория</InputLabel>
-                                <Select name="category"
+                                <Select name={i}
                                     id='outlined-required'
-                                    required="true"
+                                    required={true}
                                     labelId="select-category"
                                     label="Категория"
-                                    value={from}
+                                    value={categories[i]}
                                     onChange={handleCategoryChange}
                                 >
+                                    <MenuItem value="">Не выбрано</MenuItem>
                                     {
                                         getFlightCategories(flight)?.map(category => (
                                             <MenuItem key={category.id} value={category.id}>{category.type}</MenuItem>
                                         ))
-                                        //flightsCategories.current.map((k, v) => {console.log(v)})
-                                        // flightsCategories.current.get(flight).map(category => (
-                                        //     <MenuItem key={category.id} value={category.id}>{category.type}</MenuItem>
-                                        // ))
                                     }
 
                                 </Select>

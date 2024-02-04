@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useLoaderData } from "react-router-dom";
 import { ruRU } from "@mui/x-date-pickers";
-import ru from "dayjs/locale/ru";
+import dayjs, { locale } from "dayjs";
 export const loadRows = async () => {
     const response = await axios.get("http://localhost:8080/airport/get");
     return response.data;
@@ -20,7 +20,8 @@ const FindFlights = () => {
     const [to, setTo] = useState("");
     const [when, setWhen] = useState("");
     const navigate = useNavigate();
-
+    const ru = locale.ru;
+    
     useEffect(() => {
         getCurrentUser();
     }, []);
@@ -65,7 +66,7 @@ const FindFlights = () => {
                         <InputLabel id="select-airport-from-label">Откуда</InputLabel>
                         <Select name="from"
                             id='outlined-required'
-                            required="true"
+                            required={true}
                             labelId="select-airport-from-label"
                             label="Откуда"
                             value={from}
@@ -81,7 +82,8 @@ const FindFlights = () => {
                         <InputLabel id="select-airport-from-label">Куда</InputLabel>
                         <Select name="to"
                             id='outlined-required'
-                            required="true" labelId="select-airport-from-label"
+                            required={true}
+                            labelId="select-airport-from-label"
                             label="Куда"
                             value={to}
                             onChange={handleChangeAirportTo}
@@ -94,7 +96,7 @@ const FindFlights = () => {
                     </FormControl>
                     <DatePicker
                         name="when" id="outlined-required"
-                        required="true"
+                        required={true}
                         label="Когда"
                         onChange={handleChangeDateWhen}
                         format="DD.MM.YYYY"
