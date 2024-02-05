@@ -24,7 +24,7 @@ const Root = () => {
     const getCurrentUser = async () => {
         try {
             const response = await axios.get("http://localhost:8080/user/get-current");
-            if (response.data === '') {
+            if (response.data === '' && location.pathname !== "/registration") {
                 navigate("/login");
             }
         } catch (e) {
@@ -42,7 +42,7 @@ const Root = () => {
         }
     }
 
-    const onLogoutButtonClick = async () => {
+    const handleLogoutButtonClick = async () => {
         try {
             await axios.get("http://localhost:8080/user/logout").then(() => {
                 setRole("");
@@ -55,7 +55,6 @@ const Root = () => {
 
     const getAvailabeTabsForRole = (role) => {
         let tabs = [];
-
         if (role === "ROLE_ADMIN") {
             tabs.push(<Tab label="Главная" value={routes[0]} component={Link} to={routes[0]} />);
             tabs.push(<Tab label="Рейсы" value={routes[1]} component={Link} to={routes[1]} />);
@@ -65,6 +64,7 @@ const Root = () => {
             tabs.push(<Tab label="Города" value={routes[5]} component={Link} to={routes[5]} />);
             tabs.push(<Tab label="Аэропорты" value={routes[6]} component={Link} to={routes[6]} />);
         } else if (role === "ROLE_USER") {
+            tabs.push(<Tab label="Главная" value={routes[0]} component={Link} to={routes[0]} />);
             tabs.push(<Tab label="Купить" value={routes[7]} component={Link} to={routes[7]} />);
         }
 
@@ -72,7 +72,7 @@ const Root = () => {
     };
 
     const getAvailableTabsCountForRole = (role) => {
-        return role === "ROLE_ADMIN" ? 6 : 1;
+        return role === "ROLE_ADMIN" ? 7 : 2;
     };
 
     return (
@@ -98,7 +98,7 @@ const Root = () => {
                             </Tabs>
                         </Grid>
                     </Grid>
-                    <Button id="logout-button" style={{ color: "white" }} onClick={onLogoutButtonClick}>Выход</Button>
+                    <Button id="logout-button" style={{ color: "white" }} onClick={handleLogoutButtonClick}>Выход</Button>
                 </Toolbar>
             </AppBar>
             <Outlet />

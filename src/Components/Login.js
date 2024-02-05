@@ -32,10 +32,11 @@ const Login = () => {
     return (
         <>
             <div style={style.registrationForm}>
-                <div>Ввойдите в систему:</div>
+                <h1>Войдите в систему:</h1>
                 <TextField id="username" required label="Логин" variant="outlined" onChange={handleUsernameChange} />
                 <TextField id="password" required label="Пароль" variant="outlined" type="password" onChange={handlePasswordChange} />
                 <Button variant="outlined" type="submit" onClick={handleSubmit}>Войти</Button>
+                <a href="/registration">Или создайте аккаунт</a>
             </div>
         </>
     )

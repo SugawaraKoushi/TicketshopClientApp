@@ -159,13 +159,17 @@ const FoundFlights = () => {
         const purchaseDate = new Date();
         const bookingDate = purchaseDate;
         const price = prices[pos];
+        console.log(flights[pos].id);
+        const category = getFlightCategories(flights[pos])?.find(c => c.id === categories[pos]);
+        console.log(category);
         const params = {
             name: user.current.lastname + " " + user.current.firstname,
             departureDate: departureDate,
             purchaseDate: purchaseDate,
             bookingDate: bookingDate,
             price: Number(price),
-            flight: flights[pos]
+            flight: flights[pos],
+            category: category,
         }
         try {
             await axios.post("http://localhost:8080/ticket/create", params);
@@ -177,7 +181,7 @@ const FoundFlights = () => {
     const handleCategoryChange = (event) => {
         const pos = Number(event.target.name);
         let categoryList = categories;
-        categoryList[pos] = event.target.value ;
+        categoryList[pos] = event.target.value;
         setCategories(categoryList);
     }
 

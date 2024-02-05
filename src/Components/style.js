@@ -26,7 +26,7 @@ const style = {
     },
     registrationForm: {
         textAlign: "center",
-        fontSize: "18pt",
+        // fontSize: "18pt",
         display: "grid",
         gridAutoFlow: "row",
         gridRowGap: "15px",

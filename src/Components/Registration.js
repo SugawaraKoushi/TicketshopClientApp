@@ -55,12 +55,13 @@ const Registration = () => {
     return (
         <>
             <div style={style.registrationForm}>
+                <h1>Заполните данные</h1>
                 <TextField id="username" required label="Логин" variant="outlined" onChange={handleUsernameChange} />
                 <TextField id="lastname" required label="Фамилия" variant="outlined" onChange={handleLastnameChange} />
                 <TextField id="firstname" required label="Имя" variant="outlined" onChange={handleFirstrnameChange} />
                 <TextField id="password" required label="Пароль" variant="outlined" type="password" onChange={handlePasswordChange} />
                 <TextField error={!passwordValid} id="password-repeat" required label="Повторите пароль" variant="outlined" type="password" onChange={handleRepeatPasswordChange} />
-                <Button type="submit" onClick={handleSubmit}>Зарегистрироваться</Button>
+                <Button variant="outlined" type="submit" onClick={handleSubmit}>Зарегистрироваться</Button>
             </div>
         </>
     )
