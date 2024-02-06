@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     Container,
@@ -8,6 +9,7 @@ import {
     InputLabel,
     MenuItem,
     Select,
+    Snackbar,
     Switch,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
@@ -23,6 +25,7 @@ const FoundFlights = () => {
     const [luggagePrices, setLuggagePrices] = useState([]);
     const [luggageSwitches, setLuggageSwitches] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [snackbar, setSnackbar] = useState(null);
     const flightsCategories = useRef();
     const user = useRef();
     const navigate = useNavigate();
@@ -38,6 +41,16 @@ const FoundFlights = () => {
                 { params: state }
             );
             const data = response.data;
+
+            if (data.length === 0) {
+                setSnackbar({
+                    children: "На данную дату нет доступных рейсов",
+                    severity: "warning",
+                });
+
+                return;
+            }
+
             setFlights(data);
             generatePrice(data.length);
             generateLuggagePrice(data.length);
@@ -58,15 +71,17 @@ const FoundFlights = () => {
 
     const getCurrentUser = async () => {
         try {
-            const response = await axios.get("http://localhost:8080/user/get-current");
-            if (response.data === '') {
+            const response = await axios.get(
+                "http://localhost:8080/user/get-current"
+            );
+            if (response.data === "") {
                 navigate("/login");
             }
             user.current = response.data;
         } catch (e) {
             console.log(e.message);
         }
-    }
+    };
 
     const getHoursDeclination = (diffInHours) => {
         if (diffInHours % 10 > 4 || diffInHours % 10 === 0) {
@@ -78,7 +93,7 @@ const FoundFlights = () => {
         }
 
         return "часа";
-    }
+    };
 
     const calculateTimeDifference = (departure, arriving) => {
         const date1 = new Date(departure);
@@ -86,7 +101,9 @@ const FoundFlights = () => {
         const diffInMs = Math.abs(date2 - date1);
         const diffInHours = diffInMs / (1000 * 60 * 60);
         const diffInMinutes = (diffInMs % (1000 * 60 * 60)) / (1000 * 60);
-        return `${diffInHours.toFixed(0)} ${getHoursDeclination(diffInHours)} ${diffInMinutes.toFixed(0)} минуты`;
+        return `${diffInHours.toFixed(0)} ${getHoursDeclination(
+            diffInHours
+        )} ${diffInMinutes.toFixed(0)} минуты`;
     };
 
     const generatePrice = (size) => {
@@ -118,29 +135,36 @@ const FoundFlights = () => {
     const getFlightsCategories = async (flights) => {
         try {
             const params = {
-                flights: flights.map(f => f.id).join(","),
+                flights: flights.map((f) => f.id).join(","),
             };
 
-            const response = await axios.get(`http://localhost:8080/flight/get-categories`, { params });
+            const response = await axios.get(
+                `http://localhost:8080/flight/get-categories`,
+                { params }
+            );
             return response.data;
         } catch (e) {
             alert(e.message);
         }
-    }
+    };
 
     const getFlightCategories = (flight) => {
-        const flightWithCategories = flightsCategories?.current?.find((f) => f.flightId === flight.id);
+        const flightWithCategories = flightsCategories?.current?.find(
+            (f) => f.flightId === flight.id
+        );
         return flightWithCategories?.categories;
-    }
+    };
 
-    const handleLuggageSwitchChange = (event) => {  
+    const handleLuggageSwitchChange = (event) => {
         const ticketPrices = prices;
         const luggageTicketPrices = luggagePrices;
         const pos = Number(event.target.name);
         if (event.target.checked) {
-            ticketPrices[pos] = Number(ticketPrices[pos]) + Number(luggageTicketPrices[pos]);
+            ticketPrices[pos] =
+                Number(ticketPrices[pos]) + Number(luggageTicketPrices[pos]);
         } else {
-            ticketPrices[pos] = Number(ticketPrices[pos]) - Number(luggageTicketPrices[pos]);
+            ticketPrices[pos] =
+                Number(ticketPrices[pos]) - Number(luggageTicketPrices[pos]);
         }
         setLuggageSwitches({ [event.target.name]: event.target.checked });
         setPrices(ticketPrices);
@@ -149,9 +173,18 @@ const FoundFlights = () => {
     const getDate = (date) => {
         const d = new Date(date);
         const days = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
-        const months = ["янв", "февр", "апр", "авг", "сент", "окт", "нояб", "дек"];
+        const months = [
+            "янв",
+            "февр",
+            "апр",
+            "авг",
+            "сент",
+            "окт",
+            "нояб",
+            "дек",
+        ];
         return `${d.getDate()} ${months[d.getMonth()]}, ${days[d.getDay()]}`;
-    }
+    };
 
     const handleBuyButtonClick = async (event) => {
         const pos = Number(event.target.name);
@@ -160,7 +193,9 @@ const FoundFlights = () => {
         const bookingDate = purchaseDate;
         const price = prices[pos];
         console.log(flights[pos].id);
-        const category = getFlightCategories(flights[pos])?.find(c => c.id === categories[pos]);
+        const category = getFlightCategories(flights[pos])?.find(
+            (c) => c.id === categories[pos]
+        );
         console.log(category);
         const params = {
             name: user.current.lastname + " " + user.current.firstname,
@@ -170,11 +205,16 @@ const FoundFlights = () => {
             price: Number(price),
             flight: flights[pos],
             category: category,
-        }
+        };
         try {
             await axios.post("http://localhost:8080/ticket/create", params);
+            setSnackbar({
+                children: "Билет успешно приобретен",
+                severity: "success",
+            });
         } catch (e) {
-            console.log(e.message);
+            console.log(e.response.data);
+            setSnackbar({ children: e.response.data, severity: "error" });
         }
     };
 
@@ -183,7 +223,9 @@ const FoundFlights = () => {
         let categoryList = categories;
         categoryList[pos] = event.target.value;
         setCategories(categoryList);
-    }
+    };
+
+    const handleCloseSnackbar = () => setSnackbar(null);
 
     return (
         <>
@@ -243,9 +285,12 @@ const FoundFlights = () => {
                                 labelPlacement="start"
                             />
                             <FormControl>
-                                <InputLabel id="select-category">Категория</InputLabel>
-                                <Select name={i}
-                                    id='outlined-required'
+                                <InputLabel id="select-category">
+                                    Категория
+                                </InputLabel>
+                                <Select
+                                    name={i}
+                                    id="outlined-required"
                                     required={true}
                                     labelId="select-category"
                                     label="Категория"
@@ -253,17 +298,21 @@ const FoundFlights = () => {
                                     onChange={handleCategoryChange}
                                 >
                                     <MenuItem value="">Не выбрано</MenuItem>
-                                    {
-                                        getFlightCategories(flight)?.map(category => (
-                                            <MenuItem key={category.id} value={category.id}>{category.type}</MenuItem>
-                                        ))
-                                    }
-
+                                    {getFlightCategories(flight)?.map(
+                                        (category) => (
+                                            <MenuItem
+                                                key={category.id}
+                                                value={category.id}
+                                            >
+                                                {category.type}
+                                            </MenuItem>
+                                        )
+                                    )}
                                 </Select>
                             </FormControl>
                             <Button
                                 variant="outlined"
-                                sx={{ width: "80%", margin: "auto" }}
+                                sx={{ width: "100%", margin: "auto" }}
                                 name={i.toString()}
                                 onClick={handleBuyButtonClick}
                             >
@@ -294,7 +343,8 @@ const FoundFlights = () => {
                                     sx={{ fontSize: "8pt", textAlign: "left" }}
                                 >
                                     {flight.from.city.name}
-                                    <br />{getDate(flight.arrivingDate)}
+                                    <br />
+                                    {getDate(flight.arrivingDate)}
                                 </InputLabel>
                             </Grid>
                             <Grid
@@ -314,7 +364,7 @@ const FoundFlights = () => {
                                 >
                                     <FlightTakeoffIcon color="disabled" />
                                     <InputLabel
-                                        sx={{ color: "rgb(217, 217, 217)" }}
+                                        sx={{ color: "rgb(175, 175, 175)" }}
                                     >
                                         В пути{" "}
                                         {calculateTimeDifference(
@@ -339,13 +389,24 @@ const FoundFlights = () => {
                                     sx={{ fontSize: "8pt", textAlign: "right" }}
                                 >
                                     {flight.to.city.name}
-                                    <br />{getDate(flight.arrivingDate)}
+                                    <br />
+                                    {getDate(flight.arrivingDate)}
                                 </InputLabel>
                             </Grid>
                         </Grid>
                     </Box>
                 </Container>
             ))}
+            {!!snackbar && (
+                <Snackbar
+                    open
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    onClose={handleCloseSnackbar}
+                    autoHideDuration={6000}
+                >
+                    <Alert {...snackbar} onClose={handleCloseSnackbar} />
+                </Snackbar>
+            )}
         </>
     );
 };

@@ -248,7 +248,6 @@ const Categories = () => {
                 columnVisibilityModel={columnVisibilityModel}
                 slotProps={{
                     toolbar: { setRows, setRowModesModel },
-                    //columnsPanel: { getTogglableColumns },
                 }}
             />
             {!!snackbar && (
