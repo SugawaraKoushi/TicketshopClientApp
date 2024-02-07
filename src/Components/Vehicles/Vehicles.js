@@ -179,7 +179,6 @@ const Vehicles = () => {
                 columnVisibilityModel={columnVisibilityModel}
                 slotProps={{
                     toolbar: { setRows, setRowModesModel },
-                    //columnsPanel: { getTogglableColumns },
                 }}
             />
 

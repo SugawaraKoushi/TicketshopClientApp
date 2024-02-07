@@ -5,8 +5,6 @@ import AirlinesIcon from '@mui/icons-material/Airlines';
 import style from "./style";
 import axios from "axios";
 
-
-
 const Root = () => {
     const routes = ["/home", "/flights", "/vehicles", "/categories", "/tickets", "/cities", "/airports", "/buyTicket"];
     const location = useLocation();
@@ -104,7 +102,6 @@ const Root = () => {
             <Outlet />
         </>
     );
-
 }
 
 export default Root;
